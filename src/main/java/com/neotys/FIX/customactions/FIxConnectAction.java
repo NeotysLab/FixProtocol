@@ -47,7 +47,7 @@ public class FIxConnectAction implements Action
 
         @Override
         public boolean getDefaultIsHit() {
-        return false;
+        return true;
     }
 
         @Override
