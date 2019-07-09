@@ -21,11 +21,7 @@
 
         <!-- https://mvnrepository.com/artifact/com.neotys.ascode/swagger-java-client -->
 
-  <dependency>
-            <groupId>org.eclipse.californium</groupId>
-            <artifactId>californium-core</artifactId>
-            <version>1.0.4</version>
-    	</dependency>
+
         <dependency>
             <groupId>com.neotys.actions</groupId>
             <artifactId>neotys-custom-action-util</artifactId>
@@ -43,6 +39,13 @@
             <version>1.7.25</version>
             <scope>provided</scope>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.quickfixj/quickfixj-core -->
+<dependency>
+    <groupId>org.quickfixj</groupId>
+    <artifactId>quickfixj-core</artifactId>
+    <version>2.1.1</version>
+</dependency>
+        
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
