@@ -1,6 +1,7 @@
 package com.neotys.FIX.customactions;
 
 import com.google.common.base.Optional;
+import com.neotys.FIX.CLientApplication;
 import com.neotys.action.argument.Arguments;
 import com.neotys.action.argument.Option;
 import com.neotys.action.result.ResultFactory;
@@ -11,7 +12,12 @@ import com.neotys.extensions.action.engine.Context;
 import com.neotys.extensions.action.engine.Logger;
 import com.neotys.extensions.action.engine.SampleResult;
 
+import quickfix.ConfigError;
+import quickfix.SessionNotFound;
+
 import javax.swing.*;
+
+import java.io.FileNotFoundException;
 import java.util.*;
 
 import static com.neotys.action.argument.Arguments.getArgumentLogString;
@@ -43,9 +49,17 @@ public class FixConnectActionEngine implements ActionEngine {
         final String fixHost = parsedArgs.get(FIxConnectOption.FixServerHost.getName()).get();
 
         final String fixPort = parsedArgs.get(FIxConnectOption.FixServerPort.getName()).get();
-
+           CLientApplication client = new CLientApplication();
         sampleResult.sampleStart();
-        try {
+       
+      //  try {
+			//client.connector();
+	//	} catch (FileNotFoundException | ConfigError | InterruptedException | SessionNotFound e) {
+			// TODO Auto-generated catch block
+		//	e.printStackTrace();
+	//	}
+       // client.disconnet();
+      /*  try {
 
          //   connection =(FiSession  )context.getCurrentVirtualUser().get(ControllerCode+"_"+fixHost+":"+fixPort+".SocketObj");
             /*if (connection.isConnected()) {
@@ -59,10 +73,11 @@ public class FixConnectActionEngine implements ActionEngine {
           //  String hash = whiteblock.getBalance();
 
          //   appendLineToStringBuilder(responseBuilder, "Balanace of the account in Ether  : " + hash);
-        } catch (Exception e) {
+     /*   } catch (Exception e) {
             return ResultFactory.newErrorResult(context, STATUS_CODE_BAD_CONTEXT, "Error encountered :", e);
 
         }
+       */
 
 
         sampleResult.sampleEnd();

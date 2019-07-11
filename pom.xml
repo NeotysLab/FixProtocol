@@ -32,13 +32,16 @@
             <artifactId>neotys-rest-api-dataexchange-client-olingo</artifactId>
             <version>1.0.4</version>
         </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.25</version>
-            <scope>provided</scope>
-        </dependency>
+       <dependency>
+       <groupId>org.slf4j</groupId>
+       <artifactId>slf4j-api</artifactId>
+       <version>1.7.5</version>
+   </dependency>
+   <dependency>
+       <groupId>org.slf4j</groupId>
+       <artifactId>slf4j-log4j12</artifactId>
+       <version>1.7.5</version>
+   </dependency>
         <!-- https://mvnrepository.com/artifact/org.quickfixj/quickfixj-core -->
 <dependency>
     <groupId>org.quickfixj</groupId>
