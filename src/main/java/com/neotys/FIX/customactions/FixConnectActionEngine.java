@@ -18,6 +18,8 @@ import quickfix.SessionNotFound;
 import javax.swing.*;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static com.neotys.action.argument.Arguments.getArgumentLogString;
@@ -51,20 +53,33 @@ public class FixConnectActionEngine implements ActionEngine {
         final String fixPort = parsedArgs.get(FIxConnectOption.FixServerPort.getName()).get();
            CLientApplication client = new CLientApplication();
         sampleResult.sampleStart();
-       
-      //  try {
-			//client.connector();
-	//	} catch (FileNotFoundException | ConfigError | InterruptedException | SessionNotFound e) {
+        LocalDateTime dateStart2 = LocalDateTime.now();
+	    System.out.println(dateStart2 + " : Here we are initiating our neoload actions " ); 
+ 
+        try {
+			client.connector();
+		} catch (FileNotFoundException | ConfigError | InterruptedException | SessionNotFound e) {
+		// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
-		//	e.printStackTrace();
-	//	}
-       // client.disconnet();
+			e.printStackTrace();
+		}
+        
+        client.sendMsg();
+        
+        LocalDateTime dateStart3 = LocalDateTime.now();
+	    System.out.println(dateStart3 + " : Here we are terminating our first neoload action " ); 
+        client.disconnet();
+       LocalDateTime dateStart4 = LocalDateTime.now();
+	   System.out.println(dateStart4 + " : Here we are terminating our second neoload action " );
+	    
       /*  try {
 
          //   connection =(FiSession  )context.getCurrentVirtualUser().get(ControllerCode+"_"+fixHost+":"+fixPort+".SocketObj");
             /*if (connection.isConnected()) {
 
-            }*/
+            }
 
 
             //---to set a an opbject
