@@ -28,16 +28,12 @@ public class FIxConnectAction implements Action
 
         @Override
         public List<ActionParameter> getDefaultActionParameters() {
-        final ArrayList<ActionParameter> parameters = new ArrayList<>();
+    	final  List<ActionParameter> parameters = new ArrayList<ActionParameter>();
+        parameters.add(new ActionParameter("PathConfigfile",""));
+    	parameters.add(new ActionParameter("PathMessageFile",""));
+    	parameters.add(new ActionParameter("PathOutputFile",""));
+		return parameters;
 
-        for (final FIxConnectOption option : FIxConnectOption.values()) {
-            if (Option.AppearsByDefault.True.equals(option.getAppearsByDefault())) {
-                parameters.add(new ActionParameter(option.getName(), option.getDefaultValue(),
-                        option.getType()));
-            }
-        }
-
-        return parameters;
     }
 
         @Override
@@ -57,7 +53,7 @@ public class FIxConnectAction implements Action
 
         @Override
         public String getDescription() {
-        return "Create the Fix connect  .\n\n" + Arguments.getArgumentDescriptions(FIxConnectOption.values());
+        return " client connection with the Fiximulator server  .\n\n" ;
 
     }
         @Override

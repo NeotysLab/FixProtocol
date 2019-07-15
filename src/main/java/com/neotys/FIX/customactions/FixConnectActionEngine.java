@@ -26,38 +26,42 @@ import static com.neotys.action.argument.Arguments.getArgumentLogString;
 import static com.neotys.action.argument.Arguments.parseArguments;
 
 public class FixConnectActionEngine implements ActionEngine {
-    private static final String STATUS_CODE_INVALID_PARAMETER = "NL-WB_FIXCONNECTACTION_ACTION-01";
-    private static final String STATUS_CODE_TECHNICAL_ERROR = "NL-WB_FIXCONNECTACTION_ACTION-02";
-    private static final String STATUS_CODE_BAD_CONTEXT = "NL-WB_FIXCONNECTACTION_ACTION-03";
+	  private static String PathConfigfile ;
+	  private static String PathMessageFile ;
+	  public static String PathOutputFile   ;
 
+    
+	  private static void parseParameters(List<ActionParameter> parameters) {
+		 
+		  for (ActionParameter temp:parameters){
+				switch (temp.getName()) {
+				case "PathConfigfile":
+					PathConfigfile = temp.getValue();
+					break;
+				case "PathMessageFile":
+					PathMessageFile = temp.getValue();
+					break;
+				case "PathOutputFile":
+					PathOutputFile = temp.getValue();
+					break;
+				default :
+				}
+			} 
+	  }
+    
     @Override
     public SampleResult execute(Context context, List<ActionParameter> parameters) {
         final SampleResult sampleResult = new SampleResult();
         final StringBuilder requestBuilder = new StringBuilder();
         final StringBuilder responseBuilder = new StringBuilder();
-        final Map<String, Optional<String>> parsedArgs;
-        try {
-            parsedArgs = parseArguments(parameters, FIxConnectOption.values());
-        } catch (final IllegalArgumentException iae) {
-            return ResultFactory.newErrorResult(context, STATUS_CODE_INVALID_PARAMETER, "Could not parse arguments: ", iae);
-        }
-
-
-        final Logger logger = context.getLogger();
-        if (logger.isDebugEnabled()) {
-            logger.debug("Executing " + this.getClass().getName() + " with parameters: "
-                    + getArgumentLogString(parsedArgs, FIxConnectOption.values()));
-        }
-        final String fixHost = parsedArgs.get(FIxConnectOption.FixServerHost.getName()).get();
-
-        final String fixPort = parsedArgs.get(FIxConnectOption.FixServerPort.getName()).get();
-           CLientApplication client = new CLientApplication();
-        sampleResult.sampleStart();
+        parseParameters(parameters);
+       
         LocalDateTime dateStart2 = LocalDateTime.now();
-	    System.out.println(dateStart2 + " : Here we are initiating our neoload actions " ); 
- 
+        System.out.println(dateStart2 + " SampleResult : Config File " + PathConfigfile ); 
+         CLientApplication client = new CLientApplication();
+        sampleResult.sampleStart(); 
         try {
-			client.connector();
+			client.connector(PathConfigfile);
 		} catch (FileNotFoundException | ConfigError | InterruptedException | SessionNotFound e) {
 		// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -65,36 +69,9 @@ public class FixConnectActionEngine implements ActionEngine {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        
-        client.sendMsg();
-        
-        LocalDateTime dateStart3 = LocalDateTime.now();
-	    System.out.println(dateStart3 + " : Here we are terminating our first neoload action " ); 
-        client.disconnet();
-       LocalDateTime dateStart4 = LocalDateTime.now();
-	   System.out.println(dateStart4 + " : Here we are terminating our second neoload action " );
-	    
-      /*  try {
-
-         //   connection =(FiSession  )context.getCurrentVirtualUser().get(ControllerCode+"_"+fixHost+":"+fixPort+".SocketObj");
-            /*if (connection.isConnected()) {
-
-            }
-
-
-            //---to set a an opbject
-           // context.getCurrentVirtualUser().put("String name of the object stored in memory",connection);
-            //Web3UtilsWhiteblock whiteblock = new Web3UtilsWhiteblock(whiteBlocMasterHost, from, privatekey, publickey, traceMode, context);
-          //  String hash = whiteblock.getBalance();
-
-         //   appendLineToStringBuilder(responseBuilder, "Balanace of the account in Ether  : " + hash);
-     /*   } catch (Exception e) {
-            return ResultFactory.newErrorResult(context, STATUS_CODE_BAD_CONTEXT, "Error encountered :", e);
-
-        }
-       */
-
-
+        LocalDateTime dateStart5 = LocalDateTime.now();
+        client.sendMsg(PathMessageFile);
+	    System.out.println( dateStart5 + " SampleResult :Messages sent! " ); 
         sampleResult.sampleEnd();
 
         sampleResult.setRequestContent(requestBuilder.toString());
