@@ -16,6 +16,7 @@ import quickfix.ConfigError;
 import quickfix.SessionNotFound;
 
 import javax.swing.*;
+import javax.ws.rs.client.Client;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -55,10 +56,9 @@ public class FixConnectActionEngine implements ActionEngine {
         final StringBuilder requestBuilder = new StringBuilder();
         final StringBuilder responseBuilder = new StringBuilder();
         parseParameters(parameters);
-       
         LocalDateTime dateStart2 = LocalDateTime.now();
         System.out.println(dateStart2 + " SampleResult : Config File " + PathConfigfile ); 
-         CLientApplication client = new CLientApplication();
+        CLientApplication client = new CLientApplication();
         sampleResult.sampleStart(); 
         try {
 			client.connector(PathConfigfile);
@@ -70,10 +70,14 @@ public class FixConnectActionEngine implements ActionEngine {
 			e.printStackTrace();
 		}
         LocalDateTime dateStart5 = LocalDateTime.now();
+     
         client.sendMsg(PathMessageFile);
-	    System.out.println( dateStart5 + " SampleResult :Messages sent! " ); 
-        sampleResult.sampleEnd();
+        System.out.print("here i am close the session by calling the stop function ");
+        client.disconnet();    
+        System.out.print("connection closed ! ");
 
+         sampleResult.sampleEnd();
+  
         sampleResult.setRequestContent(requestBuilder.toString());
         sampleResult.setResponseContent(responseBuilder.toString());
         return sampleResult;
@@ -101,6 +105,7 @@ public class FixConnectActionEngine implements ActionEngine {
 
     @Override
     public void stopExecute() {
+    	
         // TODO add code executed when the test have to stop.
     }
 }
