@@ -11,8 +11,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+ import java.io.PrintWriter;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -24,8 +23,6 @@ import java.util.regex.Pattern;
 import javax.xml.soap.MessageFactory;
 
 import org.apache.commons.io.IOUtils;
-import org.omg.CORBA.portable.InputStream;
-
 import quickfix.Application;
 import quickfix.ConfigError;
 import quickfix.DefaultMessageFactory;
@@ -68,7 +65,6 @@ public class CLientApplication extends MessageCracker implements Application{
     static private TwoWayMap tifMap = new TwoWayMap();
     private String sender = null;
     private String target = null;
-    java.io.InputStream in ;
     private Initiator initiator ;
     private static String response;
     private static final CountDownLatch shutdownLatch = new CountDownLatch(1);
@@ -104,7 +100,6 @@ public class CLientApplication extends MessageCracker implements Application{
 		 * This could happen during a normal logout exchange or because of a forced termination or a loss of network connection.
 		 */
 		LocalDateTime dateStart = LocalDateTime.now();
-
 		CLientApplication.sessionID = null;
 		System.out.println(dateStart + " : OnLogout : sessionId : " +sessionId);
 		
@@ -195,8 +190,6 @@ public class CLientApplication extends MessageCracker implements Application{
 		System.out.println(dateStart+" : fromApp : Message : " + message + " : sessionID : " + sessionId);	
 	//String path="C:\\Users\\neoload\\Music\\FIX_messagesfrom_"+ now.toString() + ".cvs";
 	   String path=response+"\\reponse2.cvs";
-	   System.out.print("                  "+ path);
-	   
        File file = new File(path);
       try {
        // If file doesn't exists, then create it
@@ -225,7 +218,7 @@ public class CLientApplication extends MessageCracker implements Application{
 	
 	
 	
-	public  void connector(String path ) throws ConfigError, InterruptedException, SessionNotFound, IOException {
+	public  void connector(String path) throws ConfigError, InterruptedException, SessionNotFound, IOException {
 		
 		
  		SessionSettings settings = new SessionSettings(path);
@@ -234,7 +227,6 @@ public class CLientApplication extends MessageCracker implements Application{
 	    LogFactory logFactory = new ScreenLogFactory( true, true, true, false);
 	    quickfix.MessageFactory messageFactory = new DefaultMessageFactory();
 	    LocalDateTime dateStarte = LocalDateTime.now();
-	    System.out.println(dateStarte + " : connector : Connector Started : ConfigFile : " + path );  		
 	    initiator = new SocketInitiator(application, messageStoreFactory, settings, logFactory, messageFactory);
 	    initiator.start();
 		Read_Console(path);		 
@@ -532,7 +524,7 @@ public class CLientApplication extends MessageCracker implements Application{
           	this.target = target;
           }
           //reading cfg file
-          private void Read_Console(String path ) throws IOException {
+          private void Read_Console(String path) throws IOException {
         	  LocalDateTime dateStart = LocalDateTime.now();
         	System.out.print(dateStart + " Read_Console : path : " + path );
           	try {
