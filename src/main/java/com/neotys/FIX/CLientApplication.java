@@ -3,26 +3,28 @@ package com.neotys.FIX;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 
-import quickfix.field.MsgType;
+//import quickfix.field.MsgType;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+//import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
- import java.io.PrintWriter;
-import java.sql.Date;
-import java.text.SimpleDateFormat;
+//import java.io.PrintWriter;
+//import java.sql.Date;
+//import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+//import java.time.format.DateTimeFormatter;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Delayed;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.xml.soap.MessageFactory;
+//import javax.xml.soap.MessageFactory;
 
-import org.apache.commons.io.IOUtils;
+//import org.apache.commons.io.IOUtils;
 import quickfix.Application;
 import quickfix.ConfigError;
 import quickfix.DefaultMessageFactory;
@@ -56,8 +58,8 @@ import quickfix.field.Symbol;
 import quickfix.field.TimeInForce;
 import quickfix.field.TransactTime;
 
-import com.neotys.FIX.customactions.FIxConnectAction;
-import com.neotys.FIX.customactions.FixConnectActionEngine;
+//import com.neotys.FIX.customactions.FIxConnectAction;
+//import com.neotys.FIX.customactions.FixConnectActionEngine;
 public class CLientApplication extends MessageCracker implements Application{
 	private static volatile SessionID sessionID;
     static private TwoWayMap sideMap = new TwoWayMap();
@@ -65,11 +67,35 @@ public class CLientApplication extends MessageCracker implements Application{
     static private TwoWayMap tifMap = new TwoWayMap();
     private String sender = null;
     private String target = null;
+    private static String UserPAth;
+    int i = 0;
+    int y = 0;
     private Initiator initiator ;
     private static String response;
     private static final CountDownLatch shutdownLatch = new CountDownLatch(1);
- 
-	 
+	private ArrayList<String> msg = new ArrayList<String>() ;
+	private ArrayList<String> msg2 = new ArrayList<String>();
+
+
+	public CLientApplication() {
+		msg = new ArrayList<String>();
+	}
+	
+	public ArrayList<String> getMsg() {
+		return this.msg;
+	}
+	
+	public void addToMsg(String s) {
+		this.msg.add(s);
+	}
+	static public void setUserPath(String user) {
+		 UserPAth = user;
+	}
+	static public SessionID GetSessionId() {
+		   
+		return sessionID;
+		
+	}
 	@Override
 	public void onCreate(SessionID sessionId) {
 		/*
@@ -78,7 +104,7 @@ public class CLientApplication extends MessageCracker implements Application{
 		 * If no one is logged on, the messages will be sent at the time a connection is established with the counterparty.
 		 */
 		LocalDateTime dateStart = LocalDateTime.now();
-		 System.out.println( dateStart + ": onCreate for sessionId : "
+		System.out.println( dateStart + " : Client Instance: " + UserPAth + ": onCreate for sessionId : "
 	                + sessionId);
 		 
 	}
@@ -90,7 +116,7 @@ public class CLientApplication extends MessageCracker implements Application{
 		 */
 		LocalDateTime dateStart = LocalDateTime.now();
 		 CLientApplication.sessionID = sessionId;
-		 System.out.println(  dateStart+ " : OnLogon : sessionID : " + sessionId);
+		 System.out.println(  dateStart+ " : Client Instance: " + UserPAth + " : OnLogon : sessionID : " + sessionId);
 	}
 
 	@Override
@@ -101,7 +127,7 @@ public class CLientApplication extends MessageCracker implements Application{
 		 */
 		LocalDateTime dateStart = LocalDateTime.now();
 		CLientApplication.sessionID = null;
-		System.out.println(dateStart + " : OnLogout : sessionId : " +sessionId);
+		System.out.println(dateStart + " : Client Instance: " + UserPAth + " : OnLogout : sessionId : " +sessionId);
 		
 	}
 
@@ -113,7 +139,7 @@ public class CLientApplication extends MessageCracker implements Application{
 		 */
 		LocalDateTime dateStart = LocalDateTime.now();
 
-		System.out.println(dateStart +" : toAdmin , Message : " + message + " , sessionID is : " + sessionId );
+		System.out.println(dateStart + " : Client Instance: " + UserPAth +  " : toAdmin , Message : " + message + " , sessionID is : " + sessionId );
 		
 	}
 
@@ -126,13 +152,12 @@ public class CLientApplication extends MessageCracker implements Application{
 		 * Throwing a RejectLogon exception will disconnect the counterparty.
 		 */
 		LocalDateTime dateStart = LocalDateTime.now();
-
-		System.out.println(dateStart+":  fromAdmin  : Message : " + message + " : sessionID : " + sessionId);
-		
+		System.out.println(dateStart+ " : Client Instance: " + UserPAth + ": fromAdmin  : Message : " + message + " : sessionID : " + sessionId);		
 	}
 
 	@Override
-	public void toApp(Message message, SessionID sessionId) throws DoNotSend {
+	public void toApp(Message message, SessionID sessionId) throws DoNotSend
+	{
 		/*
 		 * This is a callback for application messages that you are sending to a counterparty. 
 		 * If you throw a DoNotSend exception in this function, the application will not send the message. 
@@ -140,36 +165,27 @@ public class CLientApplication extends MessageCracker implements Application{
 		 * Messages that are being resent are marked with the PossDupFlag in the header set to true; If a DoNotSend exception is thrown and the flag is set to true, 
 		 * a sequence reset will be sent in place of the message. 
 		 * If it is set to false, the message will simply not be sent. You may add fields before an application message before it is sent out.
-		 */
+		 */		
  		LocalDateTime dateStart = LocalDateTime.now();
-		System.out.println(dateStart+" :  toApp : Message : " + message + " : sessionID : " + sessionId);		
-		// FixConnectActionEngine.PathOutputFile  ;
-		//   String path="C:\\Users\\neoload\\Music\\FIX_messagesto_" + sessionId.toString() + "_" + dateStart.toString()+".cvs";
-		   String path=response+"\\reponse1.cvs";
-		   System.out.print("               " + path);
-		File file = new File(path);
-        try {
-	        // If file doesn't exists, then create it
-	        if (!file.exists()) {
-	            file.createNewFile();
-	        }
-
-	       // FileWriter fw = new FileWriter(file.getAbsoluteFile());
-	        BufferedWriter bw = new BufferedWriter( new FileWriter(file.getAbsoluteFile(),true));
-
-	        // Write in file
-	        bw.write(dateStart+" ; " + message.toString() +"\r\n");
-
-	        // Close connection
-	        bw.close();
-	    }
-	    catch(Exception e){
-	        System.out.println(e);
-	    }
-
-	}
-
-
+		System.out.println(dateStart+ " : Client Instance: " + UserPAth + " : toApp : Message : " + message + " : sessionID : " + sessionId);	 
+ 	    File file = new File(response);
+	      try {
+	       // If file doesn't exists, then create it
+	       if (!file.exists()) {
+	           file.createNewFile();
+	       }
+	      // FileWriter fw = new FileWriter(file.getAbsoluteFile());
+	       BufferedWriter bw = new BufferedWriter( new FileWriter(file.getAbsoluteFile(),true));
+	       // Write in file
+  	       bw.write( dateStart+ "; Sent  ;" +message.toString()+"\r\n");   
+		  
+	       // Close connection
+	       bw.close();
+	   }
+	   catch(Exception e){
+	       System.out.println(e);
+	   }     
+	 }
 	@Override
 	public void fromApp(Message message, SessionID sessionId)
 			throws FieldNotFound, IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType {
@@ -182,66 +198,64 @@ public class CLientApplication extends MessageCracker implements Application{
 		 * reject informing them your application cannot process those types of messages. 
 		 * An IncorrectTagValue can also be thrown if a field contains a value that is out of range or you do not support.
 		 */
-		
 		LocalDateTime dateStart = LocalDateTime.now();
 		 //DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd--HH:mm:ss");
 			//LocalDateTime now = LocalDateTime.now();
 			//dtf.format(now);
-		System.out.println(dateStart+" : fromApp : Message : " + message + " : sessionID : " + sessionId);	
-	//String path="C:\\Users\\neoload\\Music\\FIX_messagesfrom_"+ now.toString() + ".cvs";
-	   String path=response+"\\reponse2.cvs";
-       File file = new File(path);
-      try {
-       // If file doesn't exists, then create it
-       if (!file.exists()) {
-           file.createNewFile();
-       }
-
-      // FileWriter fw = new FileWriter(file.getAbsoluteFile());
-       BufferedWriter bw = new BufferedWriter( new FileWriter(file.getAbsoluteFile(),true));
-
-       // Write in file
-       bw.write(dateStart +" : " + message.toString() +"\r\n");
-
-       // Close connection
-       bw.close();
-   }
-   catch(Exception e){
-       System.out.println(e);
-   }
-	}
-	
-	public static void setResponse(String path3)
+  		  File file = new File(response);
+ 		 
+	      try {
+	       // If file doesn't exists, then create it
+	       if (!file.exists()) {
+	           file.createNewFile();
+	                            }
+	      // FileWriter fw = new FileWriter(file.getAbsoluteFile());
+	       BufferedWriter bw = new BufferedWriter( new FileWriter(file.getAbsoluteFile(),true));
+	       // Write in file
+ 		   bw.write(  dateStart+ " ; Received  ;" +message.toString()+ "\r\n");   
+	       // Close connection
+	       bw.close();
+	             }
+	   catch(Exception e){
+	       System.out.println(e);
+	                      }
+	       }
+	  public static void setResponse(String path3)
 	{
-	 response=path3;
+	    response=path3;
 	}
-	
-	
-	
+
 	public  void connector(String path) throws ConfigError, InterruptedException, SessionNotFound, IOException {
-		
-		
+	
  		SessionSettings settings = new SessionSettings(path);
  	    Application application = new CLientApplication();
 	    MessageStoreFactory messageStoreFactory = new FileStoreFactory(settings);
-	    LogFactory logFactory = new ScreenLogFactory( true, true, true, false);
+	    LogFactory logFactory = new ScreenLogFactory( false, false, false, false);
 	    quickfix.MessageFactory messageFactory = new DefaultMessageFactory();
 	    LocalDateTime dateStarte = LocalDateTime.now();
 	    initiator = new SocketInitiator(application, messageStoreFactory, settings, logFactory, messageFactory);
-	    initiator.start();
+		initiator.start();
+   
 		Read_Console(path);		 
 	    while (sessionID == null) {
-			LocalDateTime dateStart = LocalDateTime.now();
  	        Thread.sleep(1000);
 	    }
 	    LocalDateTime dateStart2 = LocalDateTime.now();
-	    System.out.println(dateStart2 + " connector : the connection done! " );    
- 	} 
-	  
+	    System.out.println(dateStart2 + " : Client Instance: " + UserPAth + " connector : the connection done! " );    
+ 	} 	  
           public void disconnet() {
       		LocalDateTime dateStart = LocalDateTime.now();
-        	System.out.println( dateStart+ " disconnet :  disconnected method created in the client application ");  
-             initiator.stop();	
+
+            initiator.stop();
+      		System.out.println(dateStart + " : Client Instance: " + UserPAth + " disconnect : the connection closed! " ); 
+
+    	      try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
                      }
           private void send(quickfix.Message message, SessionID sessionID) {
         		  LocalDateTime dateStart = LocalDateTime.now();
@@ -252,11 +266,7 @@ public class CLientApplication extends MessageCracker implements Application{
                   System.out.println(e);
               }
           }
-          public void logout() {
-        	      Session.lookupSession(sessionID).logout();
-        	      LocalDateTime dateStart33 = LocalDateTime.now();
-        		  System.out.println( dateStart33+ " logout : logout done : sessionId : " + sessionID);	      
-          }
+       
           
           public void send(Order order) {
     	      LocalDateTime dateStart33 = LocalDateTime.now();
@@ -387,10 +397,9 @@ public class CLientApplication extends MessageCracker implements Application{
           }
           public void sendMsg(String path2) 
           {
-        	  LocalDateTime dateStart = LocalDateTime.now();
-
-            System.out.println(dateStart+ "   sendMsg: Sending MSG-----------> " );
-        
+        	  int delay = 0 ;
+        	  int temp = 0 ;
+        	  LocalDateTime dateStart = LocalDateTime.now();        
                       BufferedReader reader;
               		try {
               			reader = new BufferedReader(new FileReader(
@@ -399,6 +408,10 @@ public class CLientApplication extends MessageCracker implements Application{
               			while (line != null) {
               				// read next line
               				line = reader.readLine();
+              				if(line.contains(",")) {
+              				delay = getDelay(line);
+              				System.out.println("the temporary delay is :   " +delay);
+              				}
               				try {
                					line = this.getChangedSenderTarget(line);
       						} catch (Exception e1) {
@@ -406,9 +419,6 @@ public class CLientApplication extends MessageCracker implements Application{
       							e1.printStackTrace();
       						}
               				Order order = new Order(line);
-                      	  LocalDateTime dateStart1 = LocalDateTime.now();
-
-              				System.out.println(dateStart1 + " sendMsg : order : "+order.toString());
 
               				order.setSessionID(CLientApplication.sessionID);
               				order.setID(this.getID(line));
@@ -417,21 +427,12 @@ public class CLientApplication extends MessageCracker implements Application{
               				order.setQuantity(this.getQty(line));
               				
               				try {
-      							Thread.sleep(1000);
+       							Thread.sleep(delay);
       						} catch (InterruptedException e) {
       							// TODO Auto-generated catch block
       							e.printStackTrace();
       						}
-              			    send(order);
-              			    /*
-              				System.out.println("Modified Message-----------> " + line);
-              				System.out.println("Order Side-----------> " + order.getSide());
-              	            System.out.println("Order Quantity-----------> " + order.getQuantity());
-              	            System.out.println("Order session-----------> " + order.getSessionID());
-              	            System.out.println("Order ID-----------> " + order.getID());
-              	            System.out.println("Order Symbol-----------> " + order.getSymbol());
-                                       */
-              				//System.out.println(order);
+              			    send(order);           			
               				line = reader.readLine();
               			}
               			reader.close();
@@ -441,9 +442,7 @@ public class CLientApplication extends MessageCracker implements Application{
 
 
       } 
-          
-          
-          
+                  
           private String getSide(String s) {
           	String pattern = "(\\x0154|^54)=(.)\\x01";
           	Pattern p = Pattern.compile(pattern);
@@ -482,7 +481,18 @@ public class CLientApplication extends MessageCracker implements Application{
           	return m.group(2);
           }
           
-     
+          
+          private int getDelay(String log_line) {
+        	  int delay=0;
+        	  
+        	  String[] var = log_line.split(",");
+        	  for(String s : var) { 
+         	  delay = Integer.parseInt(var[0]);
+        	  }
+        	 return delay;
+        	  
+          }
+          
           
           private String getChangedSenderTarget(String log_line) {
          	 String sendertag = "49" ;
@@ -526,9 +536,8 @@ public class CLientApplication extends MessageCracker implements Application{
           //reading cfg file
           private void Read_Console(String path) throws IOException {
         	  LocalDateTime dateStart = LocalDateTime.now();
-        	System.out.print(dateStart + " Read_Console : path : " + path );
-          	try {
-          		 
+           	try {
+
           		 BufferedReader readconfig = new BufferedReader(new FileReader(path));
           		 String sendername = "SenderCompID";
           		 String compname = "TargetCompID";
@@ -536,7 +545,7 @@ public class CLientApplication extends MessageCracker implements Application{
 
           		 while (get_value!=null)
           		 	 { 
-          		 		 if (get_value.contains(sendername))
+           		 		 if (get_value.contains(sendername))
           		 			 //get value of SenderCompID
           		 			 {
           		 			 setSender(get_value.substring(get_value.lastIndexOf("=")+1));
@@ -547,8 +556,7 @@ public class CLientApplication extends MessageCracker implements Application{
           		 		get_value = readconfig.readLine();
 
            		 	 }
-          		 readconfig.close();
-          		
+          		 readconfig.close();     		
           	}
            catch (FileNotFoundException e) {
           		// TODO Auto-generated catch block
@@ -559,5 +567,5 @@ public class CLientApplication extends MessageCracker implements Application{
           public void stop() {
               shutdownLatch.countDown();
           }
-
+ 
 }

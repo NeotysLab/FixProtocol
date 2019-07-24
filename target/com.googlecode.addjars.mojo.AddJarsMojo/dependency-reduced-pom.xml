@@ -148,12 +148,6 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>com.neotys.actions</groupId>
-      <artifactId>neotys-custom-action-util</artifactId>
-      <version>1.0.3</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>1.7.5</version>
